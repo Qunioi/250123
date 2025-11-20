@@ -199,8 +199,7 @@ body {
         width: 11px;
         height: 11px;
         background: rgb(var(--color-primary-text));
-        -webkit-mask: url('/image/not-use/ic_balance.svg');
-                mask: url('/image/not-use/ic_balance.svg');
+        mask: url('/image/not-use/ic_balance.svg');
         margin-left: 16px;
     }
 }
@@ -248,7 +247,7 @@ body {
             display: block;
             width: 15px;
             height: 18px;
-            -webkit-mask: url('/image/sub.svg');
+            mask: url('/image/sub.svg');
             background-color: rgb(var(--color-primary));
             position: absolute;
             top: 6px;
@@ -397,7 +396,6 @@ body {
         $icons: deposit, withdraw, platform, bank;
         @for $i from 1 through list.length($icons) {
             &--#{list.nth($icons, $i)} {
-            -webkit-mask: url('/image/first_website_icon_#{list.nth($icons, $i)}.svg') center center no-repeat;
             mask: url('/image/first_website_icon_#{list.nth($icons, $i)}.svg') center center no-repeat;
             background-color: rgb(var(--color-primary));
             }
@@ -545,7 +543,7 @@ body {
     .first-mobile-title {
         width: 397px;
         height: 52px;
-        -webkit-mask: url('/image/first_mobile_title.svg');
+        mask: url('/image/first_mobile_title.svg');
         background-color: rgb(var(--color-secondary-text));
     }
     .first-intro-text {
@@ -616,10 +614,10 @@ body {
                 mask-repeat: no-repeat;
                 mask-position: center;
                 &.ios {
-                    -webkit-mask-image: url('/image/first_mobile_ios.svg');
+                    mask-image: url('/image/first_mobile_ios.svg');
                 }
                 &.android {
-                    -webkit-mask-image: url('/image/first_mobile_android.svg');
+                    mask-image: url('/image/first_mobile_android.svg');
                 }
             }
         }
