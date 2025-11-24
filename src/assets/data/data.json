@@ -53,16 +53,16 @@
   },
   "flatImg": {
     "left": [
-      { "id": 1, "imgDefault": "float_left_01.png", "imgHover": "" },
-      { "id": 2, "imgDefault": "float_left_02.png", "imgHover": "" },
-      { "id": 3, "imgDefault": "float_left_03.png", "imgHover": "" },
-      { "id": 4, "imgDefault": "float_left_04.png", "imgHover": "" }
+      { "id": 1, "imgDefault": "float_left_detection.png", "imgHover": "" },
+      { "id": 2, "imgDefault": "float_left_agent.png", "imgHover": "" },
+      { "id": 3, "imgDefault": "float_left_hotgame.png", "imgHover": "" },
+      { "id": 4, "imgDefault": "float_left_close.png", "imgHover": "" }
     ],
     "right": [
-      { "id": 1, "imgDefault": "float_right_01.png", "imgHover": ""  },
-      { "id": 2, "imgDefault": "float_right_02.png", "imgHover": ""  },
-      { "id": 3, "imgDefault": "float_right_03.png", "imgHover": ""  },
-      { "id": 4, "imgDefault": "float_right_04.png", "imgHover": ""  }
+      { "id": 1, "imgDefault": "float_right_service.png", "imgHover": ""  },
+      { "id": 2, "imgDefault": "float_right_deposit.png", "imgHover": ""  },
+      { "id": 3, "imgDefault": "float_right_download.png", "imgHover": ""  },
+      { "id": 4, "imgDefault": "float_right_close.png", "imgHover": ""  }
     ]
   }
 }

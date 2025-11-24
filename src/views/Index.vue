@@ -1,6 +1,5 @@
 <template>
   <div class="page-container">
-    <!-- <FloatImg /> -->
     <section class="first-section-wrap first-slider-wrap">
       <!-- 轮播 -->
       <div class="ele-slider-wrap slider-wrap">
@@ -117,9 +116,6 @@
 </template>
 <script setup>
 import { storeToRefs } from 'pinia';
-import News from '@/components/common/News.vue';
-import HotGame from '@/components/common/HotGame.vue';
-import FloatImg from '@/components/common/FloatImg.vue';
 import { useTheme } from '@/composables/useTheme.js';
 import { useAuthStore } from '@/stores/authStore.js';
 import { getPath } from '@/composables/usePath.js'
