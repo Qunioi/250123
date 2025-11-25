@@ -165,7 +165,7 @@ onMounted(async () => {
 
 
 // tabs
-const tabState = ref('tabFloat');
+const tabState = ref('tabTheme');
 
 
 // 處理顏色選擇器開關

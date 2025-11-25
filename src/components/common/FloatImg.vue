@@ -1,9 +1,10 @@
 
 <template>
-  <div ref="floatContainer" class="ele-float-container">
-    <div 
-      v-if="showLeft" 
-      class="ele-nest-wrap float-left-wrap" 
+  <div class="ele-float-container">
+    <div
+      v-if="showLeft"
+      class="ele-nest-wrap float-left-wrap"
+      ref="leftWrap"
       :class="{ 'slide-out': !isLeftVisible, 'slide-in': isLeftVisible }"
       :style="containerStyle"
     >
@@ -13,16 +14,22 @@
         href="#"
         :class="{ 'has-hover': hasHoverImage('left', index) }"
         @click.prevent="index === leftList.length - 1 ? toggleLeft() : null"
-        @mouseenter="hoverId = item.id"
-        @mouseleave="hoverId = null"
+        @mouseenter="hoverLeftIndex = index"
+        @mouseleave="hoverLeftIndex = null"
       >
-        <img :src="getImgUrl('left', index, item.imgDefault)" class="out"/>
-        <img :src="getImgUrl('left', index, item.imgHover, true)" class="in" v-if="hasHoverImage('left', index)"/>
+        <img
+          :src="hoverLeftIndex === index && hasHoverImage('left', index)
+            ? getImgUrl('left', index, item.imgHover, true)
+            : getImgUrl('left', index, item.imgDefault)"
+          class="float-img"
+          :class="{ 'is-hover': hoverLeftIndex === index && hasHoverImage('left', index) }"
+        />
       </a>
     </div>
-    <div 
-      v-if="showRight" 
-      class="ele-nest-wrap float-right-wrap" 
+    <div
+      v-if="showRight"
+      class="ele-nest-wrap float-right-wrap"
+      ref="rightWrap"
       :class="{ 'slide-out': !isRightVisible, 'slide-in': isRightVisible }"
       :style="containerStyle"
     >
@@ -32,11 +39,16 @@
         href="#"
         :class="{ 'has-hover': hasHoverImage('right', index) }"
         @click.prevent="index === rightList.length - 1 ? toggleRight() : null"
-        @mouseenter="hoverId = item.id"
-        @mouseleave="hoverId = null"
+        @mouseenter="hoverRightIndex = index"
+        @mouseleave="hoverRightIndex = null"
       >
-        <img :src="getImgUrl('right', index, item.imgDefault)" class="out"/>
-        <img :src="getImgUrl('right', index, item.imgHover, true)" class="in" v-if="hasHoverImage('right', index)"/>
+        <img
+          :src="hoverRightIndex === index && hasHoverImage('right', index)
+            ? getImgUrl('right', index, item.imgHover, true)
+            : getImgUrl('right', index, item.imgDefault)"
+          class="float-img"
+          :class="{ 'is-hover': hoverRightIndex === index && hasHoverImage('right', index) }"
+        />
       </a>
     </div>
   </div>
@@ -55,6 +67,10 @@ const props = defineProps({
 
 const config = useConfigStore();
 const themeName = computed(() => config.themeColor);
+const lang = computed(() => config.lang);
+
+const hoverLeftIndex = ref(null);
+const hoverRightIndex = ref(null);
 
 // 浮動圖列表（從 localStorage 載入）
 const leftList = ref([]);
@@ -100,19 +116,19 @@ const getImgUrl = (side, index, filename, isHover = false) => {
   if (isHover && customImages.value[side] && customImages.value[side][index]) {
     return customImages.value[side][index];
   }
-  
+
   // 否則使用預設圖片
   if (!filename) {
     return '';
   }
-  
+
   // 如果是 DataURL（上傳的圖片），直接返回
   if (filename.startsWith('data:')) {
     return filename;
   }
-  
+
   // 否則使用主題路徑
-  return getPath(`/image/${themeName.value}/${filename}`);
+  return getPath(`/image/${themeName.value}/lang/${lang.value}/${filename}`);
 };
 
 // 檢查是否有 hover 圖片
@@ -121,7 +137,7 @@ const hasHoverImage = (side, index) => {
   if (customImages.value[side] && customImages.value[side][index]) {
     return true;
   }
-  
+
   // 檢查預設的 imgHover
   const list = side === 'left' ? leftList.value : rightList.value;
   const item = list[index];
@@ -158,33 +174,73 @@ watch([isLeftVisible, isRightVisible], () => {
 });
 
 // 滾動位置管理
-const floatContainer = ref(null);
-const containerStyle = ref({ top: '150px' });
-let scrollTimeout = null;
+const containerStyle = ref({ transform: 'translateY(0px)' });
+const leftWrap = ref(null);
+const rightWrap = ref(null);
+
+// 獲取 header 高度
+function getHeaderHeight() {
+  const header = document.querySelector('.header-fixed-wrap');
+  return header ? header.offsetHeight + 20 : 150; // 如果找不到 header，預設 150px
+}
 
 // 根據滾動更新容器位置
-const updatePosition = () => {
-  const scrollY = window.scrollY || window.pageYOffset || 0;
+function updatePosition() {
+  // 檢查編輯模式容器
+  const siteWrap = document.querySelector('.themeManager-site-wrap');
+  let scrollTop = window.scrollY || window.pageYOffset || 0;
+  
+  if (siteWrap) {
+    const style = window.getComputedStyle(siteWrap);
+    if (style.overflowY === 'auto' || style.overflowY === 'scroll') {
+      scrollTop = siteWrap.scrollTop;
+    }
+  }
+  
+  const headerHeight = getHeaderHeight();
+  const translateY = scrollTop;
   containerStyle.value = {
-    top: `${150 + scrollY}px`
+    transform: `translateY(${scrollTop + headerHeight}px)`
   };
-};
+}
 
-// 處理滾動事件（防抖）
-const onScroll = () => {
-  if (scrollTimeout) clearTimeout(scrollTimeout);
-  scrollTimeout = setTimeout(() => {
-    updatePosition();
-  }, 50);
-};
+// 處理滾動事件
+function onScroll() {
+  requestAnimationFrame(updatePosition);
+}
 
-// 初始化位置並添加滾動監聽
+
+
+// 初始化
 onMounted(() => {
   loadFloatImagesList();
   loadCustomImages();
   loadVisibility();
-  updatePosition();
-  window.addEventListener('scroll', onScroll);
+  
+  // 初始校正
+  requestAnimationFrame(updatePosition);
+  
+  // 監聽 window 滾動
+  window.addEventListener('scroll', onScroll, { passive: true });
+  
+  // 監聽 .themeManager-site-wrap 滾動（編輯模式）
+  // 這裡我們只需要監聽事件觸發更新，不需要讀取 scrollTop
+  const siteWrap = document.querySelector('.themeManager-site-wrap');
+  if (siteWrap) {
+    siteWrap.addEventListener('scroll', onScroll, { passive: true });
+  }
+  
+  // 額外監聽 DOM 變化以處理編輯模式切換
+  const observer = new MutationObserver(() => {
+    const newSiteWrap = document.querySelector('.themeManager-site-wrap');
+    if (newSiteWrap) {
+      newSiteWrap.removeEventListener('scroll', onScroll); // 避免重複
+      newSiteWrap.addEventListener('scroll', onScroll, { passive: true });
+    }
+    requestAnimationFrame(updatePosition);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+  
   window.addEventListener('storage', onStorageChange);
   window.addEventListener('float-img-update', onCustomUpdate);
 });
@@ -221,15 +277,16 @@ const onCustomUpdate = () => {
   loadFloatImagesList();
 };
 
-// 清理滾動監聽
+// 清理監聽
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', onScroll);
+  if (scrollContainer) {
+    scrollContainer.removeEventListener('scroll', onScroll);
+  }
   window.removeEventListener('storage', onStorageChange);
   window.removeEventListener('float-img-update', onCustomUpdate);
-  if (scrollTimeout) clearTimeout(scrollTimeout);
 });
 </script>
-
 
 <style scoped lang="scss">
 .ele-nest-wrap {
@@ -238,48 +295,27 @@ onBeforeUnmount(() => {
   align-items: center;
   position: absolute;
   left: 0;
-  z-index: 910;
-  transition: top 0.3s, transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
-
-  &.float-left-wrap,
-  &.float-right-wrap {
-    &.slide-out {
-      display: none;
-    }
-  }
+  z-index: 901;
+  transition: transform 0.3s, opacity 0.3s, visibility 0.3s, max-width 0.3s;
   &.float-right-wrap {
     left: auto;
     right: 0;
   }
-
+  &.slide-in {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    max-width: none;
+    overflow: visible;
+  }
+  &.slide-out {
+    display: none;
+  }
   img {
     display: block;
     max-width: 100%;
     height: auto;
-  }
-  a {
-    position: relative;
-    display: block;
-    .in {
-      position: absolute;
-      top: 0;
-      left: 0;
-      opacity: 0;
-      z-index: 2;
-    }
-    .out {
-      position: relative;
-      z-index: 1;
-      opacity: 1;
-    }
-    &.has-hover:hover {
-      .in {
-        opacity: 1;
-      }
-      .out {
-        opacity: 0;
-      }
-    }
   }
 }
 </style>

@@ -12,11 +12,11 @@
     /* 餘額區塊 */
     --balance-bg: rgb(255 255 255);
     --balance-text: rgb(0 0 0);
-    --balance-tool-bg: rgb(37 73 121);
+    --balance-tool-bg: rgb(210 211 216);
     --balance-tool-line: transparent;
-    --balance-btn-bg: rgb(var(--color-secondary-bg));
-    --balance-btn-bg-hover: rgb(var(--color-secondary-bg) / 90%);
-    --balance-btn-text: rgb(0 0 0);
+    --balance-btn-bg: rgb(0 0 0);
+    --balance-btn-bg-hover: rgb(0 0 0 / 50%);
+    --balance-btn-text: rgb(255 255 255);
     --balance-btn-radius: 0px;
 
     /* 共用色 */
@@ -34,36 +34,36 @@
 
 /* 2501231 */
 :root[data-theme~="2501231"] {
-    --color-primary-bg:     19 34 75;            /* #13224B */
-    --color-secondary-bg:   8 15 34;             /* #080F22 */
-    --color-tertiary-bg:    36 46 76;            /* #242E4C */
-    --color-primary-text:   210 211 216;         /* #D2D3D8 */
-    --color-secondary-text: 122 76 180;          /* #7A4CB4 */
+    --color-primary-bg:     19 34 75;          /* #13224B */
+    --color-secondary-bg:   8 15 34;           /* #080F22 */
+    --color-tertiary-bg:    36 46 76;          /* #242E4C */
+    --color-primary-text:   210 211 216;       /* #D2D3D8 */
+    --color-secondary-text: 122 76 180;        /* #7A4CB4 */
 }
 
 /* 2501232 */
 :root[data-theme~="2501232"] {
-    --color-primary-bg:     52 4 114;            /* #340472 */
-    --color-secondary-bg:   29 2 65;             /* #1D0241 */
-    --color-tertiary-bg:    52 4 114;            /* #340472 */
-    --color-primary-text:   187 181 248;         /* #BBB5F8 */
-    --color-secondary-text: 228 100 248;         /* #E464F8 */
+    --color-primary-bg:     92 0 210;          /* #5C00D2 */
+    --color-secondary-bg:   29 2 65;           /* #1D0241 */
+    --color-tertiary-bg:    52 4 114;          /* #340472 */
+    --color-primary-text:   187 181 248;       /* #BBB5F8 */
+    --color-secondary-text: 228 100 248;       /* #E464F8 */
 }
 
 /* 2501233 */
 :root[data-theme~="2501233"] {
-    --color-primary-bg:     235 240 245;         /* #EBF0F5 */
-    --color-secondary-bg:   217 223 250;         /* #D9DFFA */
-    --color-tertiary-bg:    153 166 222;         /* #99A6DE */
-    --color-primary-text:   66 81 129;           /* #425181 */
-    --color-secondary-text: 122 76 180;          /* #7A4CB4 */
+    --color-primary-bg:     235 240 245;       /* #EBF0F5 */
+    --color-secondary-bg:   217 223 250;       /* #D9DFFA */
+    --color-tertiary-bg:    153 166 222;       /* #99A6DE */
+    --color-primary-text:   66 81 129;         /* #425181 */
+    --color-secondary-text: 122 76 180;        /* #7A4CB4 */
 }
 
 /* 2501234 */
 :root[data-theme~="2501234"] {
-    --color-primary-bg:     224 147 159;         /* #E0939F */
-    --color-secondary-bg:   245 235 237;         /* #F5EBED */
-    --color-tertiary-bg:    224 147 159;         /* #E0939F */
-    --color-primary-text:   129 66 81;           /* #814251 */
-    --color-secondary-text: 180 76 159;          /* #B44C9F */
+    --color-primary-bg:     245 235 237;       /* #F5EBED */
+    --color-secondary-bg:   250 217 223;       /* #FAD9DF */
+    --color-tertiary-bg:    224 147 159;       /* #E0939F */
+    --color-primary-text:   129 66 81;         /* #814251 */
+    --color-secondary-text: 180 76 159;        /* #B44C9F */
 }

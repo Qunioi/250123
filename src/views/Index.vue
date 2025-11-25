@@ -28,7 +28,7 @@
               <div class="website-item-num"><span>20</span>秒</div>
             </div>
             <div class="website-item">
-              <div class="website-item-icon website-item-icon--platform"></div>
+              <div class="website-item-icon website-item-icon--game"></div>
               <div class="website-item-title">官方合作<br>游戏平台</div>
               <div class="website-item-num"><span>50</span>家</div>
             </div>
@@ -41,36 +41,43 @@
         </div>
       </div>
     </section>
-    <section class="first-section-wrap first-hotgame-wrap">
+    <section class="first-section-wrap first-ranking-wrap">
       <div class="section-wrap">
-        <div class="first-hotgame-header">
-          <div class="first-hotgame-title">
-            <img :src="getPath(`image/lang/${lang}/first_hotgame_title.png`)" />
+        <div class="first-ranking-header">
+          <div class="first-ranking-title">
+            <img :src="getPath(`image/${themeColor}/lang/${lang}/first_ranking_title.png`)" />
           </div>
-          <button class="first-hotgame-more-btn">
+          <button class="first-ranking-more-btn">
             <span>More</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 512 512" fill="currentColor">
-              <path
-                d="M0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM241 377c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l87-87-87-87c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0L345 239c9.4 9.4 9.4 24.6 0 33.9L241 377z" />
-            </svg>
+            <i class="icon"></i>
           </button>
         </div>
-        <div class="first-hotgame-container">
-          <a href="#" class="first-hotgame-link" :style="{ backgroundImage: `url(${getPath(`image/${themeColor}/lang/${lang}/first_hotgame0${n}.png`)})` }" v-for="n in 5" :key="n"></a>
+        <div class="first-ranking-container">
+          <a href="#" v-for="index in 5" :key="index" class="first-ranking-link">
+            <img
+              :src="rankingHover === index
+                  ? getPath(`image/${themeColor}/lang/${lang}/first_ranking0${index}_h.png`)
+                  : getPath(`image/${themeColor}/lang/${lang}/first_ranking0${index}.png`)"
+              @mouseenter="rankingHover = index"
+              @mouseleave="rankingHover = null"
+            />
+          </a>
         </div>
       </div>
     </section>
-    <section class="first-section-wrap first-Platform-wrap">
+    <section class="first-section-wrap first-platform-wrap">
       <div class="section-wrap">
-        <a href="#" v-for="(platform, index) in ['game', 'lottery', 'card', 'live', 'sport']" :key="index">
-          <img
-            :src="platformHover === index
-                ? getPath(`image/${themeColor}/lang/${lang}/first_platform_${platform}_h.png`)
-                : getPath(`image/${themeColor}/lang/${lang}/first_platform_${platform}.png`)"
-            @mouseenter="platformHover = index"
-            @mouseleave="platformHover = null"
-          />
-        </a>
+        <a
+          :href="platform"
+          v-for="(platform, index) in ['casino', 'lottery', 'card', 'live', 'sport']"
+          :key="index"
+          :style="{
+            backgroundImage: `url(${getPath(`image/${themeColor}/lang/${lang}/first_platform_${platform}.png`)})`
+          }"
+          :class="[`first-platform-link first-platform--${platform}`]"
+          @mouseenter="platformHover = index"
+          @mouseleave="platformHover = null"
+        ></a>
       </div>
     </section>
     <section class="first-section-wrap first-mobile-wrap">
@@ -83,7 +90,6 @@
             <div class="first-mobile-info-wrap">
               <div class="first-mobile-qrcode-wrap">
                 <div class="img-qrcode-bg">
-                  <!-- <img src="/image/not-use/qrcode.jpg" alt=""> -->
                   <img :src="isLoggedIn
                     ? getPath(`image/not-use/qrcode.jpg`)
                     : getPath(`image/not-use/lang/${lang}/${imgQrcode}.png`)" class="first-mob-qrcode-img" />
@@ -135,5 +141,6 @@ const slides = ref([
   { id: 1, image: 'slider01.jpg' },
   { id: 2, image: 'slider02.jpg' }
 ]);
+const rankingHover = ref(null);
 const platformHover = ref(null);
 </script>

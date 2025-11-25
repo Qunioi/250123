@@ -1,6 +1,6 @@
 <template>
   <div class="news-wrap">
-    <div class="news-title">NEWS</div>
+    <div class="news-title"></div>
     <div class="news-item">
       <div class="ele-msgnews-wrap">
         <div class="marquee-wrapper" @mouseenter="pauseAnimation" @mouseleave="resumeAnimation">

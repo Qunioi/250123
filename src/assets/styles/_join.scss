@@ -1,13 +1,25 @@
 .ele-join-section {
 	box-sizing: border-box;
-	width: 660px;
-	color: #fff; //可改
 	padding: 37px 27px 40px 46px;
 	margin: 0 auto;
     .info-title {
         font-size: 20px;
         font-weight: 400;
         margin: 10px 0 14px;
+    }
+}
+.ele-join-section {
+    box-sizing: border-box;
+    height: calc(100% - 48px);
+    font-size: 18px;
+    color: rgb(var(--color-primary-text));
+    background: rgb(var(--color-primary-bg));
+    border-radius: 0 18px 18px 0;
+    padding: 63px 50px 131px;
+    margin: 0;
+    .page-join-inner {
+        width: 660px;
+				margin: 0 auto;
     }
 }
 

@@ -1,6 +1,6 @@
 <template>
   <div class="page-wrap">
-    <FloatImg />
+    <FloatImg v-if="enableThemeManager" />
     <Loading :show="showMask" />
     <Header />
     <div class="page-container">
@@ -22,6 +22,7 @@ import { useRoute } from 'vue-router';
 
 const dataStore = useDataStore();
 const configStore = useConfigStore();
+const enableThemeManager = inject('enableThemeManager', ref(true))
 const route = useRoute();
 
 const showMask = ref(false);

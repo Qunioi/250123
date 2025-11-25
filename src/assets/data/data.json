@@ -55,7 +55,7 @@
     "left": [
       { "id": 1, "imgDefault": "float_left_detection.png", "imgHover": "" },
       { "id": 2, "imgDefault": "float_left_agent.png", "imgHover": "" },
-      { "id": 3, "imgDefault": "float_left_hotgame.png", "imgHover": "" },
+      { "id": 3, "imgDefault": "float_left_game.png", "imgHover": "" },
       { "id": 4, "imgDefault": "float_left_close.png", "imgHover": "" }
     ],
     "right": [

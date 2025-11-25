@@ -4,8 +4,8 @@
       <summary>
         <span>左侧浮动图</span>
         <div class="themeManager-floatImg-controls">
-            <button 
-                type="button" 
+            <button
+                type="button"
                 class="themeManager-floatImg-reset-all-btn"
                 @click.stop="resetAllImages('left')"
                 :disabled="!hasChanges('left')"
@@ -20,13 +20,23 @@
         </div>
       </summary>
       <div class="themeManager-detail-content">
-        <div 
-          v-for="(item, index) in leftFloatImages" 
+        <div
+          v-for="(item, index) in leftFloatImages"
           :key="'left-' + item.id"
           class="themeManager-floatImg-item"
+          draggable="true"
+          @dragstart="onDragStart($event, 'left', index)"
+          @dragend="onDragEnd"
+          @dragover="onDragOver"
+          @dragleave="onDragLeave"
+          @drop="onDrop($event, 'left', index)"
         >
           <div class="themeManager-floatImg-header">
-            <span class="themeManager-floatImg-label">左图{{ index + 1 }} (预设图尺寸: {{ imageSizes.left[index] || '检测中' }})</span>
+            <span class="themeManager-floatImg-label" title="長按可拖曳改變排序">
+              <svg width="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 7C9.32843 7 10 6.32843 10 5.5C10 4.67157 9.32843 4 8.5 4C7.67157 4 7 4.67157 7 5.5C7 6.32843 7.67157 7 8.5 7ZM8.5 13.5C9.32843 13.5 10 12.8284 10 12C10 11.1716 9.32843 10.5 8.5 10.5C7.67157 10.5 7 11.1716 7 12C7 12.8284 7.67157 13.5 8.5 13.5ZM10 18.5C10 19.3284 9.32843 20 8.5 20C7.67157 20 7 19.3284 7 18.5C7 17.6716 7.67157 17 8.5 17C9.32843 17 10 17.6716 10 18.5ZM15.5 7C16.3284 7 17 6.32843 17 5.5C17 4.67157 16.3284 4 15.5 4C14.6716 4 14 4.67157 14 5.5C14 6.32843 14.6716 7 15.5 7ZM17 12C17 12.8284 16.3284 13.5 15.5 13.5C14.6716 13.5 14 12.8284 14 12C14 11.1716 14.6716 10.5 15.5 10.5C16.3284 10.5 17 11.1716 17 12ZM15.5 20C16.3284 20 17 19.3284 17 18.5C17 17.6716 16.3284 17 15.5 17C14.6716 17 14 17.6716 14 18.5C14 19.3284 14.6716 20 15.5 20Z"></path></svg>
+              左圖{{ index + 1 }} <span v-if="imageSizes.left[index] && imageSizes.left[index] !== '检测失败'">(預設圖尺寸: {{ imageSizes.left[index] }})</span>
+              <div class="themeManager-floatImg-tooltip">長按可拖曳改變排序</div>
+            </span>
             <div class="themeManager-floatImg-header-actions">
               <button
                 v-if="leftFloatImages.length > 1"
@@ -42,20 +52,20 @@
               </button>
             </div>
           </div>
-          
+
           <div class="themeManager-floatImg-content">
             <!-- 滑出效果图 -->
             <div class="themeManager-floatImg-preview">
               <div class="themeManager-floatImg-preview-label">滑出效果图</div>
-              <div 
+              <div
                 class="themeManager-floatImg-preview-box"
                 :class="{ 'has-image': getPreviewUrl('left', index, 'default') }"
                 @mouseenter="hoverPreviewIndex = `left-${index}`"
                 @mouseleave="hoverPreviewIndex = null"
               >
                 <template v-if="getPreviewUrl('left', index, 'default')">
-                  <img 
-                    :src="getPreviewUrl('left', index, 'default')" 
+                  <img
+                    :src="getPreviewUrl('left', index, 'default')"
                     :alt="`左侧浮动图 ${index + 1}`"
                     @mouseenter="handleMouseEnter('left', index)"
                     @mouseleave="handleMouseLeave"
@@ -109,11 +119,11 @@
                 </template>
               </div>
             </div>
-            
+
             <!-- 滑入效果图 -->
             <div class="themeManager-floatImg-upload">
               <div class="themeManager-floatImg-upload-label">滑入效果图</div>
-              <div 
+              <div
                 class="themeManager-floatImg-upload-box"
                 :class="{ 'has-image': customImages.left[index] }"
                 @mouseenter="hoverImageIndex = `left-${index}`"
@@ -170,7 +180,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- 尺寸不同警告 -->
           <div class="themeManager-floatImg-warning" v-if="checkSizeMismatch('left', index)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -181,7 +191,7 @@
             <span>滑出滑入图片尺寸不同，会导致滑鼠滑入时产生图片位移或抖动，请重新检查图片。</span>
           </div>
         </div>
-        
+
         <!-- 新增浮动图按钮 -->
         <div class="themeManager-floatImg-add-wrap" v-if="leftFloatImages.length < 5">
           <button type="button" class="themeManager-floatImg-add-btn" @click="addNewItem('left')">
@@ -198,8 +208,8 @@
       <summary>
         <span>右侧浮动图</span>
         <div class="themeManager-floatImg-controls">
-            <button 
-                type="button" 
+            <button
+                type="button"
                 class="themeManager-floatImg-reset-all-btn"
                 @click.stop="resetAllImages('right')"
                 :disabled="!hasChanges('right')"
@@ -214,13 +224,23 @@
         </div>
       </summary>
       <div class="themeManager-detail-content">
-        <div 
-          v-for="(item, index) in rightFloatImages" 
+        <div
+          v-for="(item, index) in rightFloatImages"
           :key="'right-' + item.id"
           class="themeManager-floatImg-item"
+          draggable="true"
+          @dragstart="onDragStart($event, 'right', index)"
+          @dragend="onDragEnd"
+          @dragover="onDragOver"
+          @dragleave="onDragLeave"
+          @drop="onDrop($event, 'right', index)"
         >
           <div class="themeManager-floatImg-header">
-            <span class="themeManager-floatImg-label">右图{{ index + 1 }} (预设图尺寸: {{ imageSizes.right[index] || '检测中' }})</span>
+            <span class="themeManager-floatImg-label" title="長按可拖曳改變排序">
+              <svg width="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 7C9.32843 7 10 6.32843 10 5.5C10 4.67157 9.32843 4 8.5 4C7.67157 4 7 4.67157 7 5.5C7 6.32843 7.67157 7 8.5 7ZM8.5 13.5C9.32843 13.5 10 12.8284 10 12C10 11.1716 9.32843 10.5 8.5 10.5C7.67157 10.5 7 11.1716 7 12C7 12.8284 7.67157 13.5 8.5 13.5ZM10 18.5C10 19.3284 9.32843 20 8.5 20C7.67157 20 7 19.3284 7 18.5C7 17.6716 7.67157 17 8.5 17C9.32843 17 10 17.6716 10 18.5ZM15.5 7C16.3284 7 17 6.32843 17 5.5C17 4.67157 16.3284 4 15.5 4C14.6716 4 14 4.67157 14 5.5C14 6.32843 14.6716 7 15.5 7ZM17 12C17 12.8284 16.3284 13.5 15.5 13.5C14.6716 13.5 14 12.8284 14 12C14 11.1716 14.6716 10.5 15.5 10.5C16.3284 10.5 17 11.1716 17 12ZM15.5 20C16.3284 20 17 19.3284 17 18.5C17 17.6716 16.3284 17 15.5 17C14.6716 17 14 17.6716 14 18.5C14 19.3284 14.6716 20 15.5 20Z"></path></svg>
+              右圖{{ index + 1 }} <span v-if="imageSizes.right[index] && imageSizes.right[index] !== '检测失败'">(預設圖尺寸: {{ imageSizes.right[index] }})</span>
+              <div class="themeManager-floatImg-tooltip">長按可拖曳改變排序</div>
+            </span>
             <div class="themeManager-floatImg-header-actions">
               <button
                 v-if="rightFloatImages.length > 1"
@@ -236,20 +256,20 @@
               </button>
             </div>
           </div>
-          
+
           <div class="themeManager-floatImg-content">
             <!-- 滑出效果图 -->
             <div class="themeManager-floatImg-preview">
               <div class="themeManager-floatImg-preview-label">滑出效果图</div>
-              <div 
+              <div
                 class="themeManager-floatImg-preview-box"
                 :class="{ 'has-image': getPreviewUrl('right', index, 'default') }"
                 @mouseenter="hoverPreviewIndex = `right-${index}`"
                 @mouseleave="hoverPreviewIndex = null"
               >
                 <template v-if="getPreviewUrl('right', index, 'default')">
-                  <img 
-                    :src="getPreviewUrl('right', index, 'default')" 
+                  <img
+                    :src="getPreviewUrl('right', index, 'default')"
                     :alt="`右侧浮动图 ${index + 1}`"
                     @mouseenter="handleMouseEnter('right', index)"
                     @mouseleave="handleMouseLeave"
@@ -303,11 +323,11 @@
                 </template>
               </div>
             </div>
-            
+
             <!-- 滑入效果图 -->
             <div class="themeManager-floatImg-upload">
               <div class="themeManager-floatImg-upload-label">滑入效果图</div>
-              <div 
+              <div
                 class="themeManager-floatImg-upload-box"
                 :class="{ 'has-image': customImages.right[index] }"
                 @mouseenter="hoverImageIndex = `right-${index}`"
@@ -364,7 +384,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- 尺寸不同警告 -->
           <div class="themeManager-floatImg-warning" v-if="checkSizeMismatch('right', index)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -375,7 +395,7 @@
             <span>滑出滑入图片尺寸不同，会导致滑鼠滑入时产生图片位移或抖动，请重新检查图片。</span>
           </div>
         </div>
-        
+
         <!-- 新增浮动图按钮 -->
         <div class="themeManager-floatImg-add-wrap" v-if="rightFloatImages.length < 5">
           <button type="button" class="themeManager-floatImg-add-btn" @click="addNewItem('right')">
@@ -401,6 +421,7 @@ const ALLOWED_EXTS = ['jpg', 'jpeg', 'png', 'gif'];
 
 const config = useConfigStore();
 const themeName = computed(() => config.themeColor);
+const lang = computed(() => config.lang);
 
 // 浮动图列表（支持动态添加/删除，最多5张）
 const leftFloatImages = ref([]);
@@ -497,7 +518,7 @@ onMounted(() => {
   detectHoverImageSizes();
   detectImageSizes();
   detectHoverImageSizes();
-  
+
   window.addEventListener('storage', onStorageChange);
   window.addEventListener('float-img-update', onUpdate);
 });
@@ -565,7 +586,7 @@ const detectImageSizes = async () => {
     const size = await getImageSize(url);
     imageSizes.left[i] = size;
   }
-  
+
   // 检测右侧图片
   for (let i = 0; i < rightFloatImages.value.length; i++) {
     const url = getPreviewUrl('right', i, 'default');
@@ -583,7 +604,7 @@ const detectHoverImageSizes = async () => {
       hoverImageSizes.left[i] = size;
     }
   }
-  
+
   // 检测右侧滑入图片
   for (let i = 0; i < rightFloatImages.value.length; i++) {
     if (customImages.right[i]) {
@@ -611,11 +632,11 @@ const getImageSize = (url) => {
 const checkSizeMismatch = (side, index) => {
   const defaultSize = imageSizes[side][index];
   const hoverSize = hoverImageSizes[side][index];
-  
+
   if (!defaultSize || !hoverSize || defaultSize === '检测失败' || hoverSize === '检测失败') {
     return false;
   }
-  
+
   return defaultSize !== hoverSize;
 };
 
@@ -636,38 +657,40 @@ const getPreviewUrl = (side, index, type = 'default') => {
   if (type === 'hover' && customImages[side][index]) {
     return customImages[side][index];
   }
-  
+
   // 滑出效果图使用预设图片
   const images = side === 'left' ? leftFloatImages.value : rightFloatImages.value;
   const item = images[index];
-  
+
   if (!item || !item.imgDefault) {
     return '';
   }
-  
+
+  const filename = item.imgDefault;
+
   // 如果是 DataURL（上传的图片），直接返回
-  if (item.imgDefault.startsWith('data:')) {
-    return item.imgDefault;
+  if (filename.startsWith('data:')) {
+    return filename;
   }
-  
+
   // 否则使用主题路径
-  return getPath(`/image/${themeName.value}/${item.imgDefault}`);
+  return getPath(`/image/${themeName.value}/lang/${lang.value}/${filename}`);
 };
 
 // 处理滑鼠进入事件（高亮对应的浮动图）
 const handleMouseEnter = (side, index) => {
   removeHighlight();
-  
-  const selector = side === 'left' 
+
+  const selector = side === 'left'
     ? `.float-left-wrap a:nth-child(${index + 1})`
     : `.float-right-wrap a:nth-child(${index + 1})`;
-  
+
   const targetEl = document.querySelector(selector);
   if (targetEl) {
     const highlightDiv = document.createElement('div');
     highlightDiv.className = 'ele-highlight ele-highlight-float';
     highlightDiv.textContent = `${side === 'left' ? '左' : '右'} ${index + 1}`;
-    
+
     targetEl.style.position = 'relative';
     targetEl.appendChild(highlightDiv);
     currentHighlight = highlightDiv;
@@ -709,11 +732,11 @@ const onFileChange = async (e, side, index) => {
     const dataUrl = await readFileAsDataURL(file);
     customImages[side][index] = dataUrl;
     saveCustomImages();
-    
+
     // 重新检测滑入图片尺寸
     const size = await getImageSize(dataUrl);
     hoverImageSizes[side][index] = size;
-    
+
     resetInput(e);
     // alert(`${side === 'left' ? '左侧' : '右侧'}浮动图 ${index + 1} 滑入效果图已更新完成`);
   } catch (error) {
@@ -742,17 +765,17 @@ const onDefaultFileChange = async (e, side, index) => {
 
   try {
     const dataUrl = await readFileAsDataURL(file);
-    
+
     // 更新列表中的 imgDefault
     const images = side === 'left' ? leftFloatImages : rightFloatImages;
     if (images.value[index]) {
       images.value[index].imgDefault = dataUrl;
       saveFloatImagesList();
-      
+
       // 重新检测滑出图片尺寸
       const size = await getImageSize(dataUrl);
       imageSizes[side][index] = size;
-      
+
       resetInput(e);
     //   alert(`${side === 'left' ? '左侧' : '右侧'}浮动图 ${index + 1} 滑出效果图已更新完成`);
     }
@@ -766,10 +789,10 @@ const onDefaultFileChange = async (e, side, index) => {
 const isDefaultModified = (side, index) => {
   const images = side === 'left' ? leftFloatImages : rightFloatImages;
   const defaultData = side === 'left' ? data.flatImg.left : data.flatImg.right;
-  
+
   const current = images.value[index]?.imgDefault;
   const original = defaultData[index]?.imgDefault || '';
-  
+
   // 如果当前是 dataURL (上传的)，或者与原始值不同
   if (current && current.startsWith('data:')) return true;
   return current !== original;
@@ -782,7 +805,7 @@ const resetHoverImage = (side, index) => {
     delete customImages[side][index];
     saveCustomImages();
   }
-  
+
   // 清除滑入图片尺寸
   if (hoverImageSizes[side][index]) {
     delete hoverImageSizes[side][index];
@@ -795,18 +818,119 @@ const resetHoverImage = (side, index) => {
   }));
 };
 
+// --- 拖曳排序邏輯 ---
+
+const draggingIndex = ref(null);
+const draggingSide = ref(null);
+
+const onDragStart = (e, side, index) => {
+  draggingIndex.value = index;
+  draggingSide.value = side;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.dropEffect = 'move';
+  // 設置拖曳時的透明度，讓用戶知道正在拖曳
+  e.target.style.opacity = '0.5';
+};
+
+const onDragEnd = (e) => {
+  draggingIndex.value = null;
+  draggingSide.value = null;
+  e.target.style.opacity = '1';
+  
+  // 移除所有可能的 drag-over 樣式
+  document.querySelectorAll('.themeManager-floatImg-item').forEach(el => {
+    el.classList.remove('drag-over');
+  });
+};
+
+const onDragOver = (e) => {
+  e.preventDefault(); // 允許放置
+  e.dataTransfer.dropEffect = 'move';
+  
+  // 添加視覺提示
+  const item = e.target.closest('.themeManager-floatImg-item');
+  if (item) {
+    item.classList.add('drag-over');
+  }
+};
+
+const onDragLeave = (e) => {
+  const item = e.target.closest('.themeManager-floatImg-item');
+  if (item) {
+    item.classList.remove('drag-over');
+  }
+};
+
+const onDrop = (e, side, index) => {
+  e.preventDefault();
+  
+  // 移除樣式
+  const item = e.target.closest('.themeManager-floatImg-item');
+  if (item) {
+    item.classList.remove('drag-over');
+  }
+
+  // 檢查是否同側且索引不同
+  if (draggingSide.value === side && draggingIndex.value !== null && draggingIndex.value !== index) {
+    moveItem(side, draggingIndex.value, index);
+  }
+};
+
+// 移動項目並同步所有相關數據
+const moveItem = (side, fromIndex, toIndex) => {
+  // 1. 移動主列表 (leftFloatImages / rightFloatImages)
+  const list = side === 'left' ? leftFloatImages : rightFloatImages;
+  const itemToMove = list.value[fromIndex];
+  list.value.splice(fromIndex, 1);
+  list.value.splice(toIndex, 0, itemToMove);
+  
+  // 2. 同步移動 customImages (滑入圖)
+  // 將對象轉換為數組 -> 移動 -> 轉回對象
+  const syncObject = (objRef) => {
+    const arr = [];
+    // 找出最大索引以確定數組長度
+    const maxIndex = Math.max(...Object.keys(objRef[side]).map(Number), Math.max(fromIndex, toIndex));
+    
+    for (let i = 0; i <= maxIndex; i++) {
+      arr[i] = objRef[side][i];
+    }
+    
+    // 移動數組元素
+    const valToMove = arr[fromIndex];
+    arr.splice(fromIndex, 1);
+    arr.splice(toIndex, 0, valToMove);
+    
+    // 重建對象
+    const newObj = {};
+    arr.forEach((val, i) => {
+      if (val !== undefined) {
+        newObj[i] = val;
+      }
+    });
+    objRef[side] = newObj;
+  };
+
+  syncObject(customImages);
+  syncObject(imageSizes);
+  syncObject(hoverImageSizes);
+
+  // 3. 保存所有變更
+  saveFloatImagesList();
+  saveCustomImages();
+};
+
 // 删除滑出图片 (Slide-out) - 直接清空
 const resetDefaultImage = (side, index) => {
   const images = side === 'left' ? leftFloatImages : rightFloatImages;
-  
+
   if (images.value[index]) {
     // 直接清空图片
     images.value[index].imgDefault = '';
     saveFloatImagesList();
-    
+
     // 清除尺寸信息
     imageSizes[side][index] = '';
-    
+
     // 手动触发 storage 事件
     window.dispatchEvent(new StorageEvent('storage', {
       key: 'floatImagesList',
@@ -821,22 +945,22 @@ const hasChanges = (side) => {
   if (Object.keys(customImages[side]).length > 0) {
     return true;
   }
-  
+
   // 检查列表是否与预设不同
   const images = side === 'left' ? leftFloatImages : rightFloatImages;
   const defaultData = side === 'left' ? data.flatImg.left : data.flatImg.right;
-  
+
   if (images.value.length !== defaultData.length) {
     return true;
   }
-  
+
   // 检查每个项目的 imgDefault 是否与预设相同
   for (let i = 0; i < images.value.length; i++) {
     if (images.value[i].imgDefault !== defaultData[i]?.imgDefault) {
       return true;
     }
   }
-  
+
   return false;
 };
 
@@ -845,27 +969,27 @@ const resetAllImages = (side) => {
   if (!hasChanges(side)) {
     return;
   }
-  
+
   const confirmed = confirm(`确定要重置所有${side === 'left' ? '左侧' : '右侧'}浮动图吗？`);
   if (!confirmed) return;
-  
+
   // 清除所有滑入图片
   customImages[side] = {};
   saveCustomImages();
-  
+
   // 清除所有滑入图片尺寸
   hoverImageSizes[side] = {};
-  
+
   // 恢复所有滑出图片为预设值
   const images = side === 'left' ? leftFloatImages : rightFloatImages;
   const defaultData = side === 'left' ? data.flatImg.left : data.flatImg.right;
-  
+
   images.value = JSON.parse(JSON.stringify(defaultData));
   saveFloatImagesList();
-  
+
   // 重新检测所有滑出图片尺寸
   detectImageSizes();
-  
+
   // 手动触发 storage 事件以同步到 FloatImg.vue
   window.dispatchEvent(new StorageEvent('storage', {
     key: 'customFloatImages',
@@ -875,26 +999,26 @@ const resetAllImages = (side) => {
     key: 'floatImagesList',
     newValue: localStorage.getItem('floatImagesList')
   }));
-  
+
 //   alert(`已重置所有${side === 'left' ? '左侧' : '右侧'}浮动图`);
 };
 
 // 新增浮动图项目
 const addNewItem = (side) => {
   const images = side === 'left' ? leftFloatImages : rightFloatImages;
-  
+
   if (images.value.length >= 5) {
     alert('最多只能添加 5 张浮动图');
     return;
   }
-  
+
   const newId = Math.max(...images.value.map(item => item.id), 0) + 1;
   images.value.push({
     id: newId,
     imgDefault: '',
     imgHover: ''
   });
-  
+
   saveFloatImagesList();
   // alert(`已新增${side === 'left' ? '左侧' : '右侧'}浮动图 ${images.value.length}`);
 };
@@ -903,20 +1027,20 @@ const addNewItem = (side) => {
 const removeItem = (side, index) => {
   const confirmed = confirm(`确定要删除${side === 'left' ? '左侧' : '右侧'}浮动图 ${index + 1} 吗？`);
   if (!confirmed) return;
-  
+
   const images = side === 'left' ? leftFloatImages : rightFloatImages;
-  
+
   if (images.value.length <= 1) {
     alert('至少需要保留一张浮动图');
     return;
   }
-  
+
   // 删除项目
   images.value.splice(index, 1);
-  
+
   // 删除对应的自定义图片
   delete customImages[side][index];
-  
+
   // 重新整理自定义图片的索引
   const newCustomImages = {};
   Object.keys(customImages[side]).forEach(key => {
@@ -928,7 +1052,7 @@ const removeItem = (side, index) => {
     }
   });
   customImages[side] = newCustomImages;
-  
+
   saveFloatImagesList();
   saveCustomImages();
 //   alert(`已删除${side === 'left' ? '左侧' : '右侧'}浮动图 ${index + 1}`);
@@ -1047,12 +1171,10 @@ onUnmounted(() => {
   border: none;
   border-radius: 4px;
   transition: background-color .3s, opacity .3s;
-  
   &:hover:not(:disabled) {
     color: #fff;
     background-color: var(--cp-color-secondary);
   }
-  
   &:disabled {
     opacity: 0.4;
     cursor: not-allowed;
@@ -1061,15 +1183,73 @@ onUnmounted(() => {
 
 .themeManager-floatImg-item {
   background: var(--cp-color-third);
-  border: 1px solid #e8e8ef;
   border-radius: 6px;
   padding: 12px;
-  margin-bottom: 12px;
-  transition: border-color .3s;
-  
+  margin-bottom: 4px;
+  transition: border-color .3s, opacity 0.2s;
+  cursor: grab; /* 提示可拖曳 */
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  /* 拖曳時的樣式 */
+  &.drag-over {
+    border: 2px dashed var(--cp-color-secondary);
+    background: rgba(var(--cp-color-secondary-rgb), 0.1);
+  }
+
   &:hover {
     border-color: var(--cp-color-secondary);
   }
+}
+
+.themeManager-floatImg-label {
+  font-weight: 500;
+  color: var(--cp-text-primary);
+  position: relative; /* 為 Tooltip 定位 */
+  cursor: help;
+
+  /* Tooltip 樣式 */
+  .themeManager-floatImg-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    background-color: #333;
+    color: #fff;
+    font-size: 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 10;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+    /* 小三角形 */
+    &::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 5px;
+      border-style: solid;
+      border-color: #333 transparent transparent transparent;
+    }
+  }
+
+  &:hover .themeManager-floatImg-tooltip {
+    display: block;
+    animation: fadeIn 0.2s ease-in-out;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, 5px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
 }
 
 .themeManager-floatImg-header {
@@ -1105,21 +1285,17 @@ onUnmounted(() => {
   border: 1px solid #e8e8ef;
   cursor: pointer;
   transition: all .3s;
-  
   svg {
     stroke: var(--cp-text-secondary);
     transition: stroke .3s;
   }
-  
   &:hover:not(:disabled) {
     background: #fee;
     border-color: #f44;
-    
     svg {
       stroke: #f44;
     }
   }
-  
   &:disabled {
     opacity: 0.3;
     cursor: not-allowed;
@@ -1132,16 +1308,9 @@ onUnmounted(() => {
   right: 4px;
   z-index: 10;
   background: rgba(255, 255, 255, 0.9);
-  
   &:hover {
     background: #fee;
   }
-}
-
-.themeManager-floatImg-add-wrap {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px dashed #e8e8ef;
 }
 
 .themeManager-floatImg-add-btn {
@@ -1158,17 +1327,14 @@ onUnmounted(() => {
   border-radius: 6px;
   cursor: pointer;
   transition: all .3s;
-  
   svg {
     stroke: var(--cp-color-secondary);
     transition: stroke .3s;
   }
-  
   &:hover {
     background: rgba(65, 127, 247, 0.05);
     border-color: var(--cp-color-primary);
     color: var(--cp-color-primary);
-    
     svg {
       stroke: var(--cp-color-primary);
     }
@@ -1205,11 +1371,9 @@ onUnmounted(() => {
   overflow: hidden;
   cursor: pointer;
   transition: border-color .3s;
-  
   &:hover {
     border-color: var(--cp-color-secondary);
   }
-  
   img {
     width: 100%;
     height: 100%;
@@ -1225,10 +1389,8 @@ onUnmounted(() => {
   border: 1px solid #e8e8ef;
   border-radius: 4px;
   overflow: hidden;
-  
   &.has-image {
     background: transparent;
-    
     img {
       width: 100%;
       height: 100%;
@@ -1284,7 +1446,6 @@ onUnmounted(() => {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color .3s;
-  
   &:hover {
     color: #fff;
     background: var(--cp-color-secondary);
@@ -1300,13 +1461,11 @@ onUnmounted(() => {
   background: #fff3cd;
   border: 1px solid #ffc107;
   border-radius: 6px;
-  
   svg {
     flex-shrink: 0;
     stroke: #ff9800;
     margin-top: 2px;
   }
-  
   span {
     font-size: 12px;
     color: #856404;
@@ -1339,26 +1498,21 @@ onUnmounted(() => {
   cursor: pointer;
   transition: all .3s;
   gap: 8px;
-  
   svg {
     stroke: var(--cp-text-third);
     transition: stroke .3s;
   }
-  
   span {
     font-size: 12px;
     color: var(--cp-text-secondary);
     transition: color .3s;
   }
-  
   &:hover {
     background: #eef2f7;
     border-color: var(--cp-color-secondary);
-    
     svg {
       stroke: var(--cp-color-secondary);
     }
-    
     span {
       color: var(--cp-color-secondary);
     }
