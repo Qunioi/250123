@@ -533,7 +533,10 @@ body {
     inset-block-start: 0;
     inset-inline-end: -80px;
     .first-mobile-right-bg {
-        color: rgb(var(--color-primary-bg));
+        width: 812px;
+        height: 722px;
+        mask: url('/image/first_mobile_bg.svg') no-repeat center;
+        background-color: rgb(var(--color-primary-bg));
     }
     .first-mobile-phone-img {
         position: absolute;
