@@ -49,10 +49,10 @@ body {
     }
 }
 .header-middle {
-    background-color: #f1f1f1;
+    background-color: rgb(241 241 241);
 }
 .header-bottom {
-    background-color: #fff;
+    background-color: rgb(255 255 255);
 }
 .banner-wrap {
     height: 330px;
@@ -271,7 +271,7 @@ body {
             text-align: center;
             align-content: center;
             color: rgb(255 255 255);
-            background-color: rgba(18 18 18 / 95%);
+            background-color: rgb(18 18 18 / 95%);
             &:hover {
                 color: rgb(var(--color-secondary));
             }
@@ -374,7 +374,7 @@ body {
     overflow: hidden;
     width: var(--page-width);
     height: 118px;
-    background-color: #263E7F;
+    background-color: rgb(38 62 127);
     border-radius: 128px;
     position: absolute;
     left: 50%;
@@ -605,7 +605,7 @@ body {
                     display: block;
                     width: auto;
                     max-height: 100%;
-                    background-color: #fff;
+                    background-color: rgb(255 255 255);
                     border-radius: 10px;
                 }
             }
