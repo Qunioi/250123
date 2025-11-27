@@ -130,6 +130,7 @@ $langs: ('zh-tw', 'zh-cn', 'en');
     }
     .ele-acc-unicod,
     .ele-show-password {
+        color: rgb(var(--color-secondary-bg));
         position: absolute;
         top: 50%;
         right: var(--input-padding);
