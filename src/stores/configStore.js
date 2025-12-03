@@ -65,6 +65,7 @@ export const useConfigStore = defineStore('config', () => {
   const setLang = (language) => {
     lang.value = language
     lsSet('lang', language)
+    document.documentElement.setAttribute('lang', language)
   }
 
   // 初始化：從 storage/預設讀取並真正套用一次
@@ -73,6 +74,7 @@ export const useConfigStore = defineStore('config', () => {
     // 回寫到 store，以防 storage 與 state 不一致
     themeColor.value = themeName
     themeMode.value  = mode
+    document.documentElement.setAttribute('lang', lang.value)
   })
 
   return {

@@ -446,6 +446,15 @@ body {
         z-index: -1;
         transform: translate3d(-50%, 40%, 0);
     }
+    .first-ranking-title {
+        width: 258px;
+        height: 102px;
+        @each $lang in zh-tw, zh-cn, en {
+            :root[lang="#{$lang}"] & {
+                background-image: url('/image/lang/#{$lang}/first_ranking_title.png');
+            }
+        }
+    }
     .first-ranking-container {
         display: flex;
         justify-content: space-between;
@@ -657,7 +666,7 @@ body {
             .img-h5-bg {
                 width: 150px;
                 height: 150px;
-                background: url('/image/first_h5.svg') 50% 50% no-repeat;
+                background: url('/image/first_h5.png') 50% 50% no-repeat;
                 margin-bottom: 36px;
             }
         }

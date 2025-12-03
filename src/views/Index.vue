@@ -44,9 +44,7 @@
     <section class="first-section-wrap first-ranking-wrap">
       <div class="section-wrap">
         <div class="first-ranking-header">
-          <div class="first-ranking-title">
-            <img :src="getPath(`image/${themeColor}/lang/${lang}/first_ranking_title.png`)" />
-          </div>
+          <div class="first-ranking-title"></div>
           <button class="first-ranking-more-btn">
             <span>More</span>
             <i class="icon"></i>
