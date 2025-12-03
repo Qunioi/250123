@@ -19,12 +19,12 @@
           <div class="first-website-inner">
             <div class="website-item">
               <div class="website-item-icon website-item-icon--deposit"></div>
-              <div class="website-item-title">存款平均<br>到帐时间</div>
+              <div class="website-item-title">存款平均<br>到账时间</div>
               <div class="website-item-num"><span>20</span>秒</div>
             </div>
             <div class="website-item">
               <div class="website-item-icon website-item-icon--withdraw"></div>
-              <div class="website-item-title">取款平均<br>到帐时间</div>
+              <div class="website-item-title">取款平均<br>到账时间</div>
               <div class="website-item-num"><span>20</span>秒</div>
             </div>
             <div class="website-item">
