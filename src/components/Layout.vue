@@ -7,11 +7,13 @@
       <router-view />
     </div>
     <Footer />
+    <FloatBottom />
   </div>
 </template>
 
 <script setup>
 import FloatImg from '@/components/common/FloatImg.vue';
+import FloatBottom from '@/components/common/FloatBottom.vue';
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
 import Loading from '@/components/common/Loading.vue';

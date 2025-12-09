@@ -22,9 +22,11 @@
     /* 註冊 */
     --join-title: rgb(var(--color-primary-text));
     --join-subtitle: rgb(var(--color-primary-text));
-    --join-text: rgb(var(--color-primary-text));
+    --join-text: #000;
+    --join-captcha: rgb(var(--color-primary-text));
+    --join-tips: rgb(var(--color-primary-text));
     --join-line: rgb(var(--color-primary-text) / 40%);
-    --join-star: rgb(144 45 13); /* 預設 #902D0D */
+    --join-star: rgb(var(--color-primary-text));
     --join-input-focus: rgb(var(--color-secondary-text));
     --join-submit-bg: rgb(var(--color-primary-text));
     --join-submit-hover-bg: rgb(var(--color-secondary-text));
@@ -45,6 +47,12 @@
     --color-primary-text:   210 211 216;         /* #D2D3D8 */
     --color-secondary-text: 122 76 180;          /* #7A4CB4 */
 }
+
+/* dark */
+:root[data-theme~="dark"] {
+    --join-text: #fff;
+}
+
 
 /* 2501231 */
 :root[data-theme~="2501231"] {
