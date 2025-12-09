@@ -24,12 +24,25 @@
     --join-subtitle: rgb(var(--color-primary-text));
     --join-text: #000;
     --join-captcha: rgb(var(--color-primary-text));
-    --join-tips: rgb(var(--color-primary-text));
+	--join-tips: rgb(var(--color-primary-text));
     --join-line: rgb(var(--color-primary-text) / 40%);
     --join-star: rgb(var(--color-primary-text));
+    // 註冊 - Input
+    --join-input-text: #000;
+    --join-input-placeholder: rgb(117 117 117);
+    --join-input-bg: rgb(255 255 255);
+    --join-input-border: rgb(218 218 218);
     --join-input-focus: rgb(var(--color-secondary-text));
+    // 註冊 - Wallet
+    --join-wallet-bg: var(--join-input-bg);
+    --join-wallet-border: var(--join-input-border);
+    --join-wallet-primary: rgb(64 78 103);
+    --join-wallet-title: rgb(117 117 117);
+    --join-wallet-line: rgb(117 117 117);
+    --join-wallet-label: rgb(255 255 255 / 50%);
+    // 註冊 - Submit Button
     --join-submit-bg: rgb(var(--color-primary-text));
-    --join-submit-hover-bg: rgb(var(--color-secondary-text));
+    --join-submit-hover-bg: rgb(var(--color-primary-text) / 90%);
     --join-submit-text: rgb(var(--color-primary-bg));
     --join-submit-hover-text: rgb(var(--color-primary-bg));
     --join-submit-border: 0;
