@@ -110,8 +110,10 @@
             </div>
         </div>
         <div class="first-mobile-right-wrap">
-          <img v-for="index in 5" :key="index" :src="getPath(`image/first_mob0${index}.png`)"
-            :class="`first-mobile-phone-img first-mobile-phone-img0${index}`" />
+          <img :key="index" :src="getPath(`image/${themeColor}/first_mob01.png`)"
+            class="first-mobile-phone-img first-mobile-phone-img01" />
+          <img v-for="index in 4" :key="index" :src="getPath(`image/first_mob0${index + 1}.png`)"
+            :class="`first-mobile-phone-img first-mobile-phone-img0${index + 1}`" />
           <div class="first-mobile-right-bg"></div>
         </div>
       </div>

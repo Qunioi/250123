@@ -22,7 +22,7 @@
     /* 註冊 */
     --join-title: rgb(var(--color-primary-text));
     --join-subtitle: rgb(var(--color-primary-text));
-    --join-text: #000;
+    --join-text: var(--color-tertiary-text);
     --join-captcha: rgb(var(--color-primary-text));
 	--join-tips: rgb(var(--color-primary-text));
     --join-line: rgb(var(--color-primary-text) / 40%);
@@ -63,7 +63,11 @@
 
 /* dark */
 :root[data-theme~="dark"] {
-    --join-text: #fff;
+    --color-tertiary-text: #fff;
+}
+/* light */
+:root[data-theme~="light"] {
+    --color-tertiary-text: #000;
 }
 
 

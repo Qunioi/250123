@@ -10,17 +10,18 @@
     }
 }
 .ele-join-section {
-    box-sizing: border-box;
-    height: calc(100% - 48px);
-    font-size: 18px;
+	box-sizing: border-box;
+	height: calc(100% - 48px);
+	font-size: 18px;
 	color: var(--join-text);
-    border-radius: 0 18px 18px 0;
-    padding: 63px 50px 131px;
-    margin: 0;
-    .page-join-inner {
-        width: 660px;
+	background: rgb(var(--color-primary-bg));
+	border-radius: 0 18px 18px 0;
+	padding: 63px 50px 131px;
+	margin: 0;
+	.page-join-inner {
+		width: 660px;
 		margin: 0 auto;
-    }
+	}
 }
 
 .ele-join-member-wrap {
