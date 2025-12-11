@@ -150,18 +150,18 @@ async function detectSlider() {
     sliderEl = await waitForEl('.ele-slider-wrap', 3000) ||
               await waitForEl('.slider-wrap', 3000);
   }
-  
+
   if (sliderEl) {
     // 初始量測
     updateSliderSize(sliderEl, sliderSize);
-    
+
     // 如果是圖片元素，監聽載入事件
     if (sliderEl.tagName === 'IMG') {
       if (!isImgComplete(sliderEl)) {
         sliderEl.addEventListener('load', () => updateSliderSize(sliderEl, sliderSize), { once: true });
         sliderEl.addEventListener('error', () => { sliderSize.value = '載入失敗' }, { once: true });
       }
-      
+
       // 監聽 src 變化（輪播切換）
       sliderObserver = new MutationObserver(() => {
         updateSliderSize(sliderEl, sliderSize);
@@ -181,14 +181,14 @@ async function detectSlider() {
         attributes: true,
         attributeFilter: ['src', 'style'] // 也監聽 style 變化
       });
-      
+
       // 同時監聽容器尺寸變化
       const resizeObserver = new ResizeObserver(() => {
         updateSliderSize(sliderEl, sliderSize);
       });
       resizeObserver.observe(sliderEl);
     }
-    
+
     // 如果需要高亮且在首頁
     if (showHighlightByDefault && isFirst.value) {
       addSliderHighlight()
@@ -286,19 +286,63 @@ function isImgComplete(img) {
 
 // 量測並寫入顯示字串（多來源 fallback）
 function updateBoxSize(el, targetRef) {
-  // 1) 先拿 layout 寬高
+  // 1) 如果是 SVG 元素，直接讀取 width/height 屬性（不受 zoom 影響）
+  if (el.tagName === 'svg') {
+    const svgWidth = el.getAttribute('width')
+    const svgHeight = el.getAttribute('height')
+    
+    if (svgWidth && svgHeight) {
+      targetRef.value = `${svgWidth}x${svgHeight}`
+      return
+    }
+  }
+
+  // 2) 如果是 <img> 元素，優先使用原始尺寸（不受 zoom 影響）
+  if (el.tagName === 'IMG') {
+    const naturalW = el.naturalWidth || 0
+    const naturalH = el.naturalHeight || 0
+
+    if (naturalW && naturalH) {
+      targetRef.value = `${naturalW}x${naturalH}`
+      return
+    }
+
+    // 如果圖片還沒載入完成
+    if (!isImgComplete(el)) {
+      targetRef.value = '載入中...'
+      return
+    }
+  }
+
+  // 3) 如果不是 <img> 或 <svg>，嘗試找到內部的 img 或 svg
+  const imgElement = el.querySelector('img')
+  if (imgElement) {
+    const naturalW = imgElement.naturalWidth || 0
+    const naturalH = imgElement.naturalHeight || 0
+
+    if (naturalW && naturalH) {
+      targetRef.value = `${naturalW}x${naturalH}`
+      return
+    }
+  }
+
+  const svgElement = el.querySelector('svg')
+  if (svgElement) {
+    const svgWidth = svgElement.getAttribute('width')
+    const svgHeight = svgElement.getAttribute('height')
+    
+    if (svgWidth && svgHeight) {
+      targetRef.value = `${svgWidth}x${svgHeight}`
+      return
+    }
+  }
+
+  // 4) fallback: 使用 layout 寬高
   const rect = el.getBoundingClientRect()
   let w = Math.round(rect.width)
   let h = Math.round(rect.height)
 
-  // 2) 若為 0，且是 <img>，試 naturalWidth/Height
-  if ((!w || !h) && el.tagName === 'IMG') {
-    const iw = el.naturalWidth || 0
-    const ih = el.naturalHeight || 0
-    if (iw && ih) { w = iw; h = ih }
-  }
-
-  // 3) 仍為 0，再試 computed style（px 轉數字）
+  // 5) 仍為 0，再試 computed style（px 轉數字）
   if (!w || !h) {
     const cs = window.getComputedStyle(el)
     const sw = parseFloat(cs.width)
@@ -315,18 +359,18 @@ function updateSliderSize(el, targetRef) {
   if (el.tagName === 'IMG') {
     const naturalW = el.naturalWidth || 0;
     const naturalH = el.naturalHeight || 0;
-    
+
     if (naturalW && naturalH) {
       targetRef.value = `${naturalW}x${naturalH}`;
       return;
     }
-    
+
     // 如果圖片還沒載入完成，顯示載入狀態
     if (!isImgComplete(el)) {
       targetRef.value = '載入中...';
       return;
     }
-    
+
     // 如果是圖片但沒有原始尺寸，可能是載入失敗
     targetRef.value = '載入失敗';
     return;
@@ -337,17 +381,17 @@ function updateSliderSize(el, targetRef) {
   if (imgElement) {
     const naturalW = imgElement.naturalWidth || 0;
     const naturalH = imgElement.naturalHeight || 0;
-    
+
     if (naturalW && naturalH) {
       targetRef.value = `${naturalW}x${naturalH}`;
       return;
     }
-    
+
     if (!isImgComplete(imgElement)) {
       targetRef.value = '載入中...';
       return;
     }
-    
+
     targetRef.value = '載入失敗';
     return;
   }
@@ -362,9 +406,9 @@ function updateSliderSize(el, targetRef) {
     const cs = window.getComputedStyle(el);
     const sw = parseFloat(cs.width);
     const sh = parseFloat(cs.height);
-    if (sw && sh) { 
-      w = Math.round(sw); 
-      h = Math.round(sh); 
+    if (sw && sh) {
+      w = Math.round(sw);
+      h = Math.round(sh);
     }
   }
 
@@ -409,7 +453,7 @@ function onDragLeave(e) {
 async function onDrop(e) {
   dragCounter = 0
   isDragging.value = false
-  
+
   const file = e.dataTransfer?.files?.[0]
   if (file) {
     await processLogoFile(file)
@@ -421,7 +465,7 @@ async function onDrop(e) {
 // ============================================================
 async function processLogoFile(file, inputEvent = null) {
   const ext = (file.name.split('.').pop() || '').toLowerCase()
-  
+
   // 檢查檔案類型
   if (!ALLOWED_TYPES.includes(file.type) || !ALLOWED_EXTS.includes(ext)) {
     alert('僅接受 JPG、PNG 或 GIF 檔案')
@@ -429,19 +473,44 @@ async function processLogoFile(file, inputEvent = null) {
     return
   }
 
-  // 檢查檔案大小
-  if (file.size > MAX_SIZE) {
-    alert('檔案過大，請壓縮至 600KB 以下')
+  // 讀取檔案為 DataURL（需要先讀取才能檢查尺寸）
+  const dataUrl = await readFileAsDataURL(file)
+  await nextTick()
+
+  // 1. 先從頁面上的 Logo 元素讀取目標尺寸（動態適應不同版型）
+  let targetW = 200
+  let targetH = 62
+
+  const logoEl = document.querySelector('.ele-logo-img')
+  if (!logoEl) {
+    alert('找不到 Logo 元素，無法確認尺寸要求')
     if (inputEvent) resetInput(inputEvent)
     return
   }
 
-  // 讀取檔案為 DataURL
-  const dataUrl = await readFileAsDataURL(file)
-  await nextTick()
+  if (logoEl.tagName === 'svg') {
+    // SVG 元素：讀取 width 和 height 屬性
+    const svgW = logoEl.getAttribute('width')
+    const svgH = logoEl.getAttribute('height')
+    if (svgW && svgH) {
+      targetW = parseInt(svgW)
+      targetH = parseInt(svgH)
+    }
+  } else if (logoEl.tagName === 'IMG') {
+    // IMG 元素：讀取 naturalWidth 和 naturalHeight
+    if (logoEl.naturalWidth && logoEl.naturalHeight) {
+      targetW = logoEl.naturalWidth
+      targetH = logoEl.naturalHeight
+    }
+  }
 
-  // 檢查圖片尺寸
-  const { w: targetW, h: targetH } = getBox('.ele-logo-img', 180, 116)
+  if (!targetW || !targetH) {
+    alert('無法讀取 Logo 尺寸要求，請稍後再試')
+    if (inputEvent) resetInput(inputEvent)
+    return
+  }
+
+  // 2. 檢查圖片尺寸
   try {
     const { width: imgW, height: imgH } = await loadImageSize(dataUrl)
     if (imgW !== targetW || imgH !== targetH) {
@@ -451,6 +520,13 @@ async function processLogoFile(file, inputEvent = null) {
     }
   } catch {
     alert('图片读取失败，请重新选择')
+    if (inputEvent) resetInput(inputEvent)
+    return
+  }
+
+  // 2. 再檢查檔案大小
+  if (file.size > MAX_SIZE) {
+    alert('檔案過大，請壓縮至 600KB 以下')
     if (inputEvent) resetInput(inputEvent)
     return
   }
@@ -535,14 +611,14 @@ function loadImageSize(dataUrl) {
   position: relative;
   transition: border-color 0.2s, background-color 0.2s;
   border: 2px dashed transparent;
-  
+
   &:hover {
     .themeManager-imgSize-size {
       color: rgb(255 255 255);
       background-color: var(--cp-color-secondary);
     }
   }
-  
+
   // 拖放進入狀態
   &.is-dragging {
     border-color: var(--cp-color-secondary);
@@ -660,7 +736,7 @@ function loadImageSize(dataUrl) {
   gap: 8px;
   color: var(--cp-text-third);
   font-size: 12px;
-  
+
   svg {
     opacity: .5;
     animation: dropIconBounce 0.5s ease infinite alternate;
