@@ -2,8 +2,13 @@
   <div class="themeManager-imgSize-wrap">
     <div
       class="themeManager-imgSize-section"
+      :class="{ 'is-dragging': isDragging }"
       @mouseenter="handleMouseEnter('logo')"
-      @mouseleave="handleMouseLeave">
+      @mouseleave="handleMouseLeave"
+      @dragover.prevent="onDragOver"
+      @dragenter.prevent="onDragEnter"
+      @dragleave.prevent="onDragLeave"
+      @drop.prevent="onDrop">
       <div class="themeManager-imgSize-title logo">
         <label>Logo</label>
         <span class="themeManager-imgSize-size">{{ logoSize }}</span>
@@ -29,6 +34,14 @@
       </div>
       <div class="themeManager-imgSize-tips">
         <span>仅接受<b>JPG/PNG/GIF</b>，大小≤<b>600KB</b></span>
+        <span class="themeManager-imgSize-drag-hint">（支持拖曳上传）</span>
+      </div>
+      <!-- 拖放覆蓋層 -->
+      <div v-if="isDragging" class="themeManager-imgSize-drop-overlay">
+        <div class="themeManager-imgSize-drop-text">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" fill="currentColor"><path d="M12 12.5858L16.2426 16.8284L14.8284 18.2426L13 16.415V22H11V16.413L9.17157 18.2426L7.75736 16.8284L12 12.5858ZM12 2C15.5934 2 18.5544 4.70761 18.9541 8.19395C21.2858 8.83154 23 10.9656 23 13.5C23 16.3688 20.8036 18.7246 18.0006 18.9776L18 17C19.6569 17 21 15.6569 21 14C21 12.3431 19.6569 11 18 11H17V10C17 7.23858 14.7614 5 12 5C9.23858 5 7 7.23858 7 10V11H6C4.34315 11 3 12.3431 3 14C3 15.6569 4.34315 17 6 17L6.00039 18.9776C3.19696 18.7252 1 16.3692 1 13.5C1 10.9656 2.71424 8.83154 5.04648 8.19411C5.44561 4.70761 8.40661 2 12 2Z"></path></svg>
+          <span>放开上传 Logo</span>
+        </div>
       </div>
     </div>
     <div
@@ -67,6 +80,10 @@ let domObserver = null  // 用來等元素進 DOM
 
 const showHighlightByDefault = false
 let currentHighlight = null
+
+// 拖放狀態
+const isDragging = ref(false)
+let dragCounter = 0  // 用於處理子元素的 dragenter/dragleave
 
 // 處理滑鼠進入事件
 const handleMouseEnter = (type) => {
@@ -365,44 +382,90 @@ function getBox(selector, fallbackW = 0, fallbackH = 0) {
   return { el, w, h }
 }
 
-// Logo 上傳檢查
-async function onLogoFileChange(e) {
-  const file = e?.target?.files?.[0]
-  if (!file) return
+// ============================================================
+// 拖放事件處理
+// ============================================================
+function onDragOver(e) {
+  // 確保是檔案拖放
+  if (e.dataTransfer?.types?.includes('Files')) {
+    e.dataTransfer.dropEffect = 'copy'
+  }
+}
 
+function onDragEnter(e) {
+  dragCounter++
+  if (e.dataTransfer?.types?.includes('Files')) {
+    isDragging.value = true
+  }
+}
+
+function onDragLeave(e) {
+  dragCounter--
+  if (dragCounter === 0) {
+    isDragging.value = false
+  }
+}
+
+async function onDrop(e) {
+  dragCounter = 0
+  isDragging.value = false
+  
+  const file = e.dataTransfer?.files?.[0]
+  if (file) {
+    await processLogoFile(file)
+  }
+}
+
+// ============================================================
+// 共用的檔案處理邏輯
+// ============================================================
+async function processLogoFile(file, inputEvent = null) {
   const ext = (file.name.split('.').pop() || '').toLowerCase()
+  
+  // 檢查檔案類型
   if (!ALLOWED_TYPES.includes(file.type) || !ALLOWED_EXTS.includes(ext)) {
     alert('僅接受 JPG、PNG 或 GIF 檔案')
-    resetInput(e)
+    if (inputEvent) resetInput(inputEvent)
     return
   }
 
+  // 檢查檔案大小
   if (file.size > MAX_SIZE) {
     alert('檔案過大，請壓縮至 600KB 以下')
-    resetInput(e)
+    if (inputEvent) resetInput(inputEvent)
     return
   }
 
+  // 讀取檔案為 DataURL
   const dataUrl = await readFileAsDataURL(file)
   await nextTick()
 
+  // 檢查圖片尺寸
   const { w: targetW, h: targetH } = getBox('.ele-logo-img', 180, 116)
   try {
     const { width: imgW, height: imgH } = await loadImageSize(dataUrl)
     if (imgW !== targetW || imgH !== targetH) {
       alert(`尺寸不符合，需为 ${targetW}x${targetH} 像素（目前为 ${imgW}x${imgH}）`)
-      resetInput(e)
+      if (inputEvent) resetInput(inputEvent)
       return
     }
   } catch {
     alert('图片读取失败，请重新选择')
-    resetInput(e)
+    if (inputEvent) resetInput(inputEvent)
     return
   }
 
+  // 儲存 Logo
   assets.setLogo(dataUrl)
-  resetInput(e)
+  if (inputEvent) resetInput(inputEvent)
   alert('Logo 已更新完成')
+}
+
+// Logo 上傳（點擊選擇檔案）
+async function onLogoFileChange(e) {
+  const file = e?.target?.files?.[0]
+  if (!file) return
+  await processLogoFile(file, e)
 }
 
 function resetLogo() {
@@ -469,11 +532,21 @@ function loadImageSize(dataUrl) {
   background: var(--cp-color-third);
   border-radius: 6px;
   padding: 10px;
+  position: relative;
+  transition: border-color 0.2s, background-color 0.2s;
+  border: 2px dashed transparent;
+  
   &:hover {
     .themeManager-imgSize-size {
       color: rgb(255 255 255);
       background-color: var(--cp-color-secondary);
     }
+  }
+  
+  // 拖放進入狀態
+  &.is-dragging {
+    border-color: var(--cp-color-secondary);
+    background-color: rgb(65 127 247 / 10%);
   }
 }
 
@@ -556,6 +629,59 @@ function loadImageSize(dataUrl) {
   padding-top: 8px;
   b {
     font-size: 11px;
+  }
+  .themeManager-imgSize-drag-hint {
+    color: var(--cp-text-secondary);
+    opacity: 0.7;
+  }
+}
+
+// 拖放覆蓋層
+.themeManager-imgSize-drop-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--cp-color-third);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+  animation: dropOverlayFadeIn 0.2s ease;
+}
+
+.themeManager-imgSize-drop-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--cp-text-third);
+  font-size: 12px;
+  
+  svg {
+    opacity: .5;
+    animation: dropIconBounce 0.5s ease infinite alternate;
+  }
+}
+
+@keyframes dropOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dropIconBounce {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-4px);
   }
 }
 </style>
