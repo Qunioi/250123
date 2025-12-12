@@ -161,6 +161,11 @@ onMounted(async () => {
   if (panelVisible.value) {
     document.body.classList.add('is-edit');
   }
+  
+  // 確保初始化時有選中的主題
+  if (!selectedThemeName.value && themes.length > 0) {
+    selectedThemeName.value = themes[0].themeName;
+  }
 });
 
 
